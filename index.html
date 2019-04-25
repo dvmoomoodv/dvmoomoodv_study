@@ -1,0 +1,75 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+        integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+
+    <title>Study Issue List</title>
+</head>
+
+<body>
+    <h1>Study Issue List</h1>
+
+    <ul id="issue-data" class="list-group">
+
+    </ul>
+
+    <!-- Optional JavaScript -->
+    <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+    <script src="https://code.jquery.com/jquery-3.4.0.js"
+        integrity="sha256-DYZMCC8HTC+QDr5QNaIcfR7VSPtcISykd+6eSmBW5qo=" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"
+        integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous">
+    </script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"
+        integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous">
+    </script>
+
+    <script>
+        $(document).ready(function () {
+            getIssue(); // #1
+        });
+
+        // Gets the README.md.
+        var getIssue = function () {
+            var url = "https://api.github.com/repos/dvmoomoodv/dvmoomoodv_study/issues";
+            $.ajax({
+                    type: "GET",
+                    url: url,
+                    dataType: "json"
+                })
+                .done(function (data) {
+                    var contents = "";
+                    var count_content = "";
+                    console.log(data);
+                    for (var i = 0; i < data.length; i++) {
+
+                        if(data[i].state == "close")
+                            continue;
+
+
+                        var count = data[i].comments;
+                        var url = data[i].html_url;
+                        var title = data[i].title;
+
+                        if(count > 0)
+                            count_content = "<span class='badge badge-primary badge-pill'>" + count + "</span>";
+                        else 
+                            count_content = "";
+                            
+                        contents += "<a target='_blank' href='" + url + "'><li class='list-group-item'>" + title + count_content + "</li></a>";
+                    }
+                    
+                    $("#issue-data").html(contents);
+                });
+        };
+    </script>
+</body>
+
+</html>
