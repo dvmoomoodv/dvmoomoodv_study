@@ -16,10 +16,14 @@
 <body>
     <h1>Study Issue List</h1>
 
-    <ul id="issue-data" class="list-group">
+    <!-- <ul id="issue-data" class="list-group"></ul> -->
+
+    <ul class="nav nav-tabs" id="myTab" role="tablist">
 
     </ul>
+    <div class="tab-content" id="myTabContent">
 
+    </div>
     <!-- Optional JavaScript -->
     <!-- jQuery first, then Popper.js, then Bootstrap JS -->
     <script src="https://code.jquery.com/jquery-3.4.0.js"
@@ -33,8 +37,51 @@
 
     <script>
         $(document).ready(function () {
+            getLabels();
             getIssue(); // #1
         });
+
+        var getLabels = function () {
+            var url = "https://api.github.com/repos/dvmoomoodv/dvmoomoodv_study/labels";
+            $.ajax({
+                    type: "GET",
+                    url: url,
+                    dataType: "json"
+                })
+                .done(function (data) {
+                    console.log(data);
+                    //myTab
+                    //myTabContent
+                    var myTab = '\
+                    <li class=\"nav-item\">\
+    <a class=\"nav-link active\" id=\"all-tab\" data-toggle=\"tab\"\ href=\"#all\" role=\"tab\" aria-controls=\"all\"\ aria-selected=\"true\">All</a>\
+  </li>';
+
+                    var myTabContent = '\
+                    <div class="tab-pane fade show active" id="all"\
+                    role="tabpanel" aria-labelledby="all-tab"></div>\
+                        ';
+
+
+                    for (var i = 0; i < data.length; i++) {
+
+                        myTab += '\
+                    <li class=\"nav-item\">\
+    <a class=\"nav-link\" id=\"' + data[i].name + '-tab\" data-toggle=\"tab\"\ href=\"#' + data[i].name +
+                            '\" role=\"tab\" aria-controls=\"' + data[i].name + '\"\ aria-selected=\"false\">' +
+                            data[i].name + '</a>\
+  </li>';
+
+  myTabContent += '\
+                    <div class="tab-pane fade" id="' + data[i].name + '"\
+                    role="tabpanel" aria-labelledby="' + data[i].name + '-tab"></div>\
+                        ';
+                    }
+
+                    $("#myTab").html(myTab);
+                    $("#myTabContent").html(myTabContent);
+                });
+        }
 
         // Gets the README.md.
         var getIssue = function () {
@@ -50,7 +97,7 @@
                     console.log(data);
                     for (var i = 0; i < data.length; i++) {
 
-                        if(data[i].state == "close")
+                        if (data[i].state == "close")
                             continue;
 
 
@@ -58,15 +105,27 @@
                         var url = data[i].html_url;
                         var title = data[i].title;
 
-                        if(count > 0)
+                       
+
+                        if (count > 0)
                             count_content = "<span class='badge badge-primary badge-pill'>" + count + "</span>";
-                        else 
+                        else
                             count_content = "";
-                            
-                        contents += "<a target='_blank' href='" + url + "'><li class='list-group-item'>" + title + count_content + "</li></a>";
+
+                        contents += "<a target='_blank' href='" + url + "'><li class='list-group-item'>" +
+                            title + count_content + "</li></a>";
+
+                        if(data[i].labels.length > 0){
+                            var labels = data[i].labels;
+                            for (var j = 0; j < labels.length; j++) {
+                                $("#"+labels[j].name).append("<a target='_blank' href='" + url + "'><li class='list-group-item'>" +
+                            title + count_content + "</li></a>");
+                            }
+                        }
                     }
-                    
-                    $("#issue-data").html(contents);
+
+                    // $("#issue-data").html(contents);
+                    $("#all").html(contents);
                 });
         };
     </script>
