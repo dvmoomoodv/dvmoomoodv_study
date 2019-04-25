@@ -84,6 +84,10 @@
         }
 
         // Gets the README.md.
+        // body 를 넣고 
+        // comment 내용도 넣으면 좋을듯 
+        // 이슈넘버는 따로 저장해서 다시 이 api내에서 다시 재호출 
+        // https://developer.github.com/v3/issues/comments/
         var getIssue = function () {
             var url = "https://api.github.com/repos/dvmoomoodv/dvmoomoodv_study/issues";
             $.ajax({
